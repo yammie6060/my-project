@@ -3,7 +3,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { FaHome, FaBoxOpen, FaUsers, FaEnvelope, FaUserAlt } from 'react-icons/fa';
 
 const Dashboard = ({ isDark }) => {
-
+  
   const location = useLocation();
   const username = location.state?.username ;
   const totalStock = "";  
