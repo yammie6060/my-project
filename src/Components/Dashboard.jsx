@@ -83,7 +83,8 @@ const Dashboard = ({ isDark }) => {
       </div>
 
       <div className="mt-8">
-        <h3 className={`text font-bold ${isDark ? 'text-white' : 'text-gray-500'}`}>
+        <h3 className={`text font-bold ${isDark ? 'text-white' : 'text-gray-500'}`}> 
+          
           Welcome, <span className={isDark ? 'text-green-400' : 'text-green-700'}>{username}</span>
         </h3>
       </div>
