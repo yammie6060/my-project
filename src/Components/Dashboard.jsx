@@ -1,9 +1,12 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { FaHome, FaBoxOpen, FaUsers, FaEnvelope, FaUserAlt } from 'react-icons/fa';
 
 const Dashboard = ({ isDark }) => {
-  const totalStock = "";  // Example data
+
+  const location = useLocation();
+  const username = location.state?.username || 'Guest';
+  const totalStock = "";  
   const totalStaff = "";
   const totalUsers = "";
   const totalEmails = "";
@@ -81,11 +84,10 @@ const Dashboard = ({ isDark }) => {
 
       <div className="mt-8">
         <h3 className={`text font-bold ${isDark ? 'text-white' : 'text-gray-500'}`}>
-          Welcome, <span className={isDark ? 'text-green-400' : 'text-green-700'}>Admin</span>
+          Welcome, <span className={isDark ? 'text-green-400' : 'text-green-700'}>{username}</span>
         </h3>
       </div>
 
-      {/* Cards Section */}
       <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         {cardData.map((item, index) => (
           <Link
@@ -113,7 +115,6 @@ const Dashboard = ({ isDark }) => {
         ))}
       </div>
 
-      {/* Progress Overview Section */}
       <div className="mt-10">
         <h3 className={`text-xl font-bold mb-4 ${isDark ? 'text-white' : 'text-gray-500'}`}>
           Progress Overview

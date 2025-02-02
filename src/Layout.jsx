@@ -259,20 +259,31 @@ const Layout = ({ onLogout }) => {
 };
 
 const App = () => {
-  const [isLoggedIn, setIsLoggedIn] = useState(
-    localStorage.getItem('isLoggedIn') === 'true'
-  );
-
-  const handleLogin = () => {
+  const [isLoggedIn, setIsLoggedIn] = useState(() => {
+    return localStorage.getItem('isLoggedIn') === 'true';
+  });
+  
+  const [username, setUsername] = useState(() => {
+    return localStorage.getItem('username') || '';
+  });
+  
+  
+  useEffect(() => {
+    localStorage.setItem('isLoggedIn', isLoggedIn);
+    localStorage.setItem('username', username);
+  }, [isLoggedIn, username]);
+  
+  const handleLogin = (user) => {
     setIsLoggedIn(true);
-    localStorage.setItem('isLoggedIn', 'true');
+    setUsername(user);
   };
-
+  
   const handleLogout = () => {
     setIsLoggedIn(false);
+    setUsername('');
     localStorage.removeItem('isLoggedIn');
+    localStorage.removeItem('username');
   };
-
   return (
     <BrowserRouter>
       <Routes>

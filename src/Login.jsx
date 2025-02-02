@@ -66,9 +66,9 @@ function Login({ onLogin }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (isRegistering) {
-      console.log('Registration Data:', formData);
-    } else {
+
+    // Validation
+    if (formData.username === 'admin' && formData.password === '1234') {
       if (formData.rememberMe) {
         localStorage.setItem('username', formData.username);
         localStorage.setItem('password', formData.password);
@@ -76,8 +76,11 @@ function Login({ onLogin }) {
         localStorage.removeItem('username');
         localStorage.removeItem('password');
       }
-      onLogin();
-      navigate('/Dashboard');
+      onLogin(formData.username);
+      navigate('/Dashboard', { state: { username: formData.username } });
+
+    } else {
+      alert('Invalid username or password');
     }
   };
 
