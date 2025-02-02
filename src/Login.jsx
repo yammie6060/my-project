@@ -67,7 +67,6 @@ function Login({ onLogin }) {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    // Validation
     if (formData.username === 'admin' && formData.password === '1234') {
       if (formData.rememberMe) {
         localStorage.setItem('username', formData.username);
