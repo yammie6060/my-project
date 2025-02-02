@@ -268,9 +268,9 @@ const App = () => {
     localStorage.setItem('username', username);
   }, [isLoggedIn, username]);
   
-  const handleLogin = (user) => {
+  const handleLogin = (username) => {
     setIsLoggedIn(true);
-    setUsername(user);
+    setUsername(username);
   };
   
   const handleLogout = () => {
