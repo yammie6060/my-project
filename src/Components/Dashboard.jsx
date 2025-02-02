@@ -5,7 +5,7 @@ import { FaHome, FaBoxOpen, FaUsers, FaEnvelope, FaUserAlt } from 'react-icons/f
 const Dashboard = ({ isDark }) => {
 
   const location = useLocation();
-  const username = location.state?.username || 'Guest';
+  const username = location.state?.username ;
   const totalStock = "";  
   const totalStaff = "";
   const totalUsers = "";
@@ -84,7 +84,7 @@ const Dashboard = ({ isDark }) => {
 
       <div className="mt-8">
         <h3 className={`text font-bold ${isDark ? 'text-white' : 'text-gray-500'}`}> 
-          
+
           Welcome, <span className={isDark ? 'text-green-400' : 'text-green-700'}>{username}</span>
         </h3>
       </div>
