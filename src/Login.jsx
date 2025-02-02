@@ -67,14 +67,7 @@ function Login({ onLogin }) {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    if (formData.username === 'admin' && formData.password === '1234') {
-      if (formData.rememberMe) {
-        localStorage.setItem('username', formData.username);
-        localStorage.setItem('password', formData.password);
-      } else {
-        localStorage.removeItem('username');
-        localStorage.removeItem('password');
-      }
+    if (formData.username && formData.password) {
       onLogin(formData.username);
       navigate('/Dashboard', { state: { username: formData.username } });
 
