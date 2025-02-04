@@ -104,7 +104,7 @@ const Layout = ({ onLogout }) => {
         />
       )}
       <aside
-        className={`fixed inset-y-0 top-5 left-0 z-50 transition-transform duration-300 ease-in-out ${
+        className={`fixed inset-y-0 top-2 left-0 z-50 transition-transform duration-300 ease-in-out ${
           isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
         } ${
           isMobile || isIconsOnly ? 'w-20' : 'w-64'

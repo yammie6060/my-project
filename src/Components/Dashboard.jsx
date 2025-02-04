@@ -74,15 +74,15 @@ const Dashboard = ({ isDark }) => {
   ];
 
   return (
-    <div className={`p-8 min-h-screen ${isDark ? 'bg-gray-900' : ''}`}>
-      <div className="flex justify-between items-center">
+    <div className={`p-6 min-h-screen ${isDark ? 'bg-gray-900' : ''}`}>
+      
         <h4 className={`flex items-center gap-2 font-bold ${isDark ? 'text-green-400' : 'text-green-800'}`}>
           <FaHome size={24} /> 
           <span>Dashboard</span>
         </h4>
-      </div>
+     
 
-      <div className="mt-8">
+      <div className="mt-6">
         <h3 className={`text font-bold ${isDark ? 'text-white' : 'text-gray-500'}`}> 
 
           Welcome, <span className={isDark ? 'text-green-400' : 'text-green-700'}>{username}</span>
