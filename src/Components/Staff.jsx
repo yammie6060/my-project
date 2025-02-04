@@ -46,7 +46,7 @@ const StaffPage = () => {
     setEditingStaff(staff);
     setIsAddStaffFormOpen(true);
   };
-
+  
   return (
     <>
       <div className="min-h-screen">
