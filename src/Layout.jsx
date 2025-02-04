@@ -98,13 +98,13 @@ const Layout = ({ onLogout }) => {
     >
       {isMobile && isSidebarOpen && (
         <div
-          className="fixed bg-black bg-opacity-50 z-40"
+          className="fixed bg-black bg-opacity-50 z-50"
           onClick={toggleSidebar}
           aria-hidden="true"
         />
       )}
       <aside
-        className={`fixed inset-y-0 left-0 z-50 transition-transform duration-300 ease-in-out ${
+        className={`fixed inset-y-0 top-5 left-0 z-50 transition-transform duration-300 ease-in-out ${
           isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
         } ${
           isMobile || isIconsOnly ? 'w-20' : 'w-64'
@@ -130,7 +130,7 @@ const Layout = ({ onLogout }) => {
           {navItems.map((item) => (
             <div
               key={item.title}
-              className="flex items-center p-4 rounded cursor-pointer hover:bg-gray-700 transition-colors duration-200"
+              className="flex items-center p-4 rounded cursor-pointer hover:text-gray-700 transition-colors duration-200"
               onClick={() => {
                 if (item.onClick) item.onClick();
                 else {
@@ -169,7 +169,7 @@ const Layout = ({ onLogout }) => {
         alt="Hospital Sign"
         className="w-8 h-8 md:w-10 md:h-10 object-contain"
       />
-      <h2 className="hidden md:block text-base md:text-lg font-bold text-gray-900 whitespace-nowrap">
+      <h2 className={"hidden md:block text-base md:text-lg font-bold whitespace-nowrap"}>
         Thanzilanga+
       </h2>
     </div>
