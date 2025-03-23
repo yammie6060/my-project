@@ -170,7 +170,8 @@ const Layout = ({ onLogout }) => {
         className="w-8 h-8 md:w-10 md:h-10 object-contain"
       />
       <h2 className={"hidden md:block text-base md:text-lg font-bold whitespace-nowrap"}>
-        Thanzilanga+
+        <span className='text-lg font-bold text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-blue-700'>
+        Thanzilanga+ </span>
       </h2>
     </div>
         </div>

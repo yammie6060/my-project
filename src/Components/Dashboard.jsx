@@ -74,7 +74,7 @@ const Dashboard = ({ isDark }) => {
   ];
 
   return (
-    <div className={`p-6 min-h-screen ${isDark ? 'bg-gray-900' : ''}`}>
+    <div className={`p-4 min-h-screen ${isDark ? 'bg-gray-900' : ''}`}>
       
         <h4 className={`flex items-center gap-2 font-bold ${isDark ? 'text-green-400' : 'text-green-800'}`}>
           <FaHome size={24} /> 
@@ -84,8 +84,7 @@ const Dashboard = ({ isDark }) => {
 
       <div className="mt-6">
         <h3 className={`text font-bold ${isDark ? 'text-white' : 'text-gray-500'}`}> 
-
-          Welcome, <span className={isDark ? 'text-green-400' : 'text-green-700'}>{username}</span>
+          Welcome, <span className={isDark ? 'text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-blue-700' : 'text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-blue-700'}>{username}</span>
         </h3>
       </div>
 

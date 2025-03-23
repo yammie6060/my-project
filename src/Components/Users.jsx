@@ -123,8 +123,7 @@ const UsersPage = () => {
             </form>
           </Modal.Body>
         </Modal>
-
-        {/* Users Table */}
+        {/*user table */}
         {users.length > 0 ? (
           <div className="mt-6">
             <div className="overflow-x-auto">
