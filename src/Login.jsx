@@ -5,36 +5,49 @@ import global from './assets/global-aid.png';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
+// Define route constants to prevent typos
+const ROUTES = {
+  LOGIN: '/login',
+  REGISTER: '/register',
+  PASSWORD_RESET: '/password-reset',
+  DASHBOARD: '/dashboard'
+};
+
 const AuthHeader = ({ onLoginClick, onRegisterClick }) => {
   return (
-    <div className="bg-gradient-to-r from-indigo-800 to-purple-900 text-white py-4 shadow-lg">
+    <div className="bg-gradient-to-r from-indigo-900 via-purple-900 to-violet-900 text-white py-4 shadow-xl">
       <div className="container mx-auto flex justify-between items-center px-6">
         <div className="flex items-center space-x-3">
           <motion.img 
-            whileHover={{ rotate: 360 }}
-            transition={{ duration: 0.8 }}
+            whileHover={{ rotate: 360, scale: 1.1 }}
+            transition={{ type: 'spring', stiffness: 300 }}
             src={global} 
             alt="Thanzilanga+ Logo" 
-            className="w-10 h-10 rounded-full shadow-md" 
+            className="w-10 h-10 rounded-full shadow-lg ring-2 ring-white/20" 
           />
-          <span className="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-green-300 via-blue-400 to-purple-400">
+          <motion.span 
+            initial={{ opacity: 0, x: -10 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.2 }}
+            className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-blue-400 to-purple-400"
+          >
             Thanzilanga+
-          </span>
+          </motion.span>
         </div>
         <div className="flex space-x-4">
           <motion.button
-            whileHover={{ scale: 1.05 }}
+            whileHover={{ scale: 1.05, boxShadow: "0 10px 25px -5px rgba(99, 102, 241, 0.4)" }}
             whileTap={{ scale: 0.95 }}
             onClick={onLoginClick}
-            className="bg-gradient-to-r from-indigo-500 to-purple-600 text-white px-6 py-2 rounded-md text-sm font-medium transition-all duration-300 shadow-md hover:shadow-lg"
+            className="bg-gradient-to-r from-indigo-600 to-purple-700 text-white px-6 py-2 rounded-lg text-sm font-medium transition-all duration-300 shadow-lg hover:shadow-indigo-500/30"
           >
             Login
           </motion.button>
           <motion.button
-            whileHover={{ scale: 1.05 }}
+            whileHover={{ scale: 1.05, boxShadow: "0 10px 25px -5px rgba(16, 185, 129, 0.4)" }}
             whileTap={{ scale: 0.95 }}
             onClick={onRegisterClick}
-            className="bg-gradient-to-r from-green-400 to-emerald-500 hover:from-green-500 hover:to-emerald-600 text-white px-6 py-2 rounded-md text-sm font-medium transition-all duration-300 shadow-md hover:shadow-lg"
+            className="bg-gradient-to-r from-emerald-500 to-teal-600 text-white px-6 py-2 rounded-lg text-sm font-medium transition-all duration-300 shadow-lg hover:shadow-emerald-500/30"
           >
             Sign Up
           </motion.button>
@@ -44,19 +57,18 @@ const AuthHeader = ({ onLoginClick, onRegisterClick }) => {
   );
 };
 
-// Reusable Form Input component
 const FormInput = ({ type, name, value, onChange, label, required = true }) => (
-  <div className="relative">
+  <div className="relative group">
     <input
       type={type}
       name={name}
       value={value}
       onChange={onChange}
-      className="peer w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm transition-all duration-200 bg-white/80 backdrop-blur-sm"
+      className="peer w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-sm transition-all duration-300 bg-white/90 backdrop-blur-sm group-hover:border-indigo-300"
       placeholder=" "
       required={required}
     />
-    <label className="absolute left-3 -top-2.5 px-1 bg-white text-gray-600 text-xs transition-all duration-200 ease-in-out">
+    <label className="absolute left-3 -top-2.5 px-1 bg-white text-gray-600 text-xs transition-all duration-200 ease-in-out peer-focus:text-indigo-600 peer-focus:font-medium">
       {label}
     </label>
   </div>
@@ -74,15 +86,17 @@ function Login({ onLogin }) {
     rememberMe: false,
   });
   const [resetEmail, setResetEmail] = useState('');
-  const [isResetting, setIsResetting] = useState(false);
   const [loading, setLoading] = useState(false);
-  const isRegistering = location.pathname === '/register';
-  const [formState, setFormState] = useState('initial'); // 'initial', 'submitting', 'success', 'error'
+  const [formState, setFormState] = useState('initial');
+
+  // Determine the current auth mode based on route
+  const isRegistering = location.pathname === ROUTES.REGISTER;
+  const isResetting = location.pathname === ROUTES.PASSWORD_RESET;
 
   useEffect(() => {
     const savedUsername = localStorage.getItem('username');
     const savedPassword = localStorage.getItem('password');
-    if (savedUsername && savedPassword) {
+    if (savedUsername && savedPassword && location.pathname === ROUTES.LOGIN) {
       setFormData((prev) => ({
         ...prev,
         username: savedUsername,
@@ -90,7 +104,7 @@ function Login({ onLogin }) {
         rememberMe: true,
       }));
     }
-  }, []);
+  }, [location.pathname]);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -105,7 +119,6 @@ function Login({ onLogin }) {
     setLoading(true);
     setFormState('submitting');
 
-    // Simulate network request
     setTimeout(() => {
       setLoading(false);
 
@@ -116,13 +129,11 @@ function Login({ onLogin }) {
           return;
         }
         
-        // Registration success
         setFormState('success');
-        toast.success("Registration successful! Please login");
-        setTimeout(() => navigate('/login'), 2000);
+        toast.success("🎉 Registration successful! Please login");
+        setTimeout(() => navigate(ROUTES.LOGIN), 2000);
       } else {
         if (formData.username && formData.password) {
-          // Store credentials if remember me is checked
           if (formData.rememberMe) {
             localStorage.setItem('username', formData.username);
             localStorage.setItem('password', formData.password);
@@ -131,16 +142,15 @@ function Login({ onLogin }) {
             localStorage.removeItem('password');
           }
 
-          // Login success
           setFormState('success');
-          toast.success(`Welcome back, ${formData.username}!`);
+          toast.success(`✨ Welcome back, ${formData.username}!`);
           setTimeout(() => {
             onLogin(formData.username);
-            navigate('/Dashboard', { state: { username: formData.username } });
+            navigate(ROUTES.DASHBOARD, { state: { username: formData.username } });
           }, 1500);
         } else {
           setFormState('error');
-          toast.error('Invalid username or password');
+          toast.error('🔐 Invalid username or password');
         }
       }
     }, 1000);
@@ -151,62 +161,62 @@ function Login({ onLogin }) {
     setLoading(true);
     setFormState('submitting');
 
-    // Simulate network request
     setTimeout(() => {
       setLoading(false);
       setFormState('success');
-      toast.info(`A password reset link has been sent to ${resetEmail}`);
-      setTimeout(() => {
-        setIsResetting(false);
-        navigate('/login');
-      }, 2000);
+      toast.info(`📧 A password reset link has been sent to ${resetEmail}`);
+      setTimeout(() => navigate(ROUTES.LOGIN), 2000);
     }, 1000);
   };
 
-  // Animation variants
   const cardVariants = {
     hidden: { opacity: 0, y: 20 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.5 } },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } },
     exit: { opacity: 0, y: -20, transition: { duration: 0.3 } }
   };
 
-  const buttonColorClass = "bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700";
+  const buttonColorClass = "bg-gradient-to-r from-indigo-600 to-purple-700 hover:from-indigo-700 hover:to-purple-800";
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-indigo-50 via-purple-50 to-teal-50">
-      <ToastContainer position="top-right" autoClose={3000} />
+    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-cyan-50">
+      <ToastContainer 
+        position="top-right" 
+        autoClose={3000}
+        toastClassName="!bg-white !text-gray-800 !shadow-xl !rounded-xl !border !border-gray-200"
+        progressClassName="!bg-gradient-to-r from-indigo-500 to-purple-600"
+      />
+      
       <AuthHeader
-        onLoginClick={() => navigate('/login')}
-        onRegisterClick={() => navigate('/register')}
+        onLoginClick={() => navigate(ROUTES.LOGIN)}
+        onRegisterClick={() => navigate(ROUTES.REGISTER)}
       />
       
       <div className="flex items-center justify-center py-16 px-4 sm:px-6 lg:px-8">
         <AnimatePresence mode="wait">
           <motion.div 
-            key={isResetting ? 'reset' : (isRegistering ? 'register' : 'login')}
+            key={location.pathname} // Use pathname as key for proper animations
             variants={cardVariants}
             initial="hidden"
             animate="visible"
             exit="exit"
             className="w-full max-w-md"
           >
-            <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-xl overflow-hidden border border-gray-100">
-              {/* Top decorative bar */}
-              <div className="h-2 bg-gradient-to-r from-indigo-500 to-purple-600"></div>
+            <div className="bg-white/95 backdrop-blur-md rounded-3xl shadow-2xl overflow-hidden border border-white/20">
+              <div className="h-2 bg-gradient-to-r from-indigo-600 via-purple-600 to-violet-600"></div>
               
-              {/* Header panel */}
-              <div className="bg-gradient-to-br from-indigo-600 to-purple-700 text-white px-8 py-6">
+              <div className="bg-gradient-to-br from-indigo-700 to-purple-800 text-white px-8 py-6">
                 <motion.h2 
                   initial={{ opacity: 0, x: -10 }}
                   animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.1 }}
                   className="text-2xl font-bold mb-2"
                 >
                   {isResetting ? 'Reset Password' : (isRegistering ? 'Join Thanzilanga+' : 'Welcome Back')}
                 </motion.h2>
                 <motion.p 
                   initial={{ opacity: 0 }}
-                  animate={{ opacity: 1, transition: { delay: 0.2 } }}
-                  className="text-indigo-100 text-sm"
+                  animate={{ opacity: 1, transition: { delay: 0.3 } }}
+                  className="text-indigo-200 text-sm"
                 >
                   {isResetting 
                     ? 'Enter your email to receive reset instructions'
@@ -216,7 +226,6 @@ function Login({ onLogin }) {
                 </motion.p>
               </div>
 
-              {/* Form section */}
               <div className="p-8">
                 {isResetting ? (
                   <>
@@ -231,22 +240,28 @@ function Login({ onLogin }) {
                       />
                       
                       <motion.button
-                        whileHover={{ scale: 1.02 }}
+                        whileHover={{ scale: 1.02, boxShadow: "0 10px 25px -5px rgba(99, 102, 241, 0.4)" }}
                         whileTap={{ scale: 0.98 }}
                         type="submit"
                         disabled={loading}
-                        className={`w-full ${buttonColorClass} text-white py-3 rounded-lg text-sm font-medium transition-all duration-300 shadow-md hover:shadow-lg ${loading ? 'opacity-70 cursor-not-allowed' : ''}`}
+                        className={`w-full ${buttonColorClass} text-white py-3 rounded-xl text-sm font-medium transition-all duration-300 shadow-lg hover:shadow-indigo-500/30 ${loading ? 'opacity-70 cursor-not-allowed' : ''}`}
                       >
-                        {loading ? 'Sending...' : 'Send Reset Link'}
+                        {loading ? (
+                          <span className="flex items-center justify-center">
+                            <motion.span 
+                              animate={{ rotate: 360 }}
+                              transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                              className="inline-block h-4 w-4 border-2 border-white border-t-transparent rounded-full mr-2"
+                            />
+                            Sending...
+                          </span>
+                        ) : 'Send Reset Link'}
                       </motion.button>
                       
                       <div className="text-center mt-4">
                         <motion.span
                           whileHover={{ color: '#4F46E5' }}
-                          onClick={() => {
-                            setIsResetting(false);
-                            navigate('/login');
-                          }}
+                          onClick={() => navigate(ROUTES.LOGIN)}
                           className="text-indigo-600 hover:text-indigo-800 text-sm cursor-pointer font-medium"
                         >
                           Back to Login
@@ -321,10 +336,7 @@ function Login({ onLogin }) {
                           <div>
                             <motion.span
                               whileHover={{ color: '#4F46E5' }}
-                              onClick={() => {
-                                setIsResetting(true);
-                                navigate('/password-reset');
-                              }}
+                              onClick={() => navigate(ROUTES.PASSWORD_RESET)}
                               className="text-indigo-600 hover:text-indigo-800 text-sm cursor-pointer font-medium"
                             >
                               Forgot Password?
@@ -334,16 +346,23 @@ function Login({ onLogin }) {
                       )}
                       
                       <motion.button
-                        whileHover={{ scale: 1.02 }}
+                        whileHover={{ scale: 1.02, boxShadow: "0 10px 25px -5px rgba(99, 102, 241, 0.4)" }}
                         whileTap={{ scale: 0.98 }}
                         type="submit"
                         disabled={loading}
-                        className={`w-full mt-2 ${buttonColorClass} text-white py-3 rounded-lg text-sm font-medium transition-all duration-300 shadow-md hover:shadow-lg
+                        className={`w-full mt-2 ${buttonColorClass} text-white py-3 rounded-xl text-sm font-medium transition-all duration-300 shadow-lg hover:shadow-indigo-500/30
                         ${loading ? 'opacity-70 cursor-not-allowed' : ''}`}
                       >
-                        {loading ? 
-                          (isRegistering ? 'Creating Account...' : 'Signing In...') : 
-                          (isRegistering ? 'Create Account' : 'Sign In')}
+                        {loading ? (
+                          <span className="flex items-center justify-center">
+                            <motion.span 
+                              animate={{ rotate: 360 }}
+                              transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                              className="inline-block h-4 w-4 border-2 border-white border-t-transparent rounded-full mr-2"
+                            />
+                            {isRegistering ? 'Creating Account...' : 'Signing In...'}
+                          </span>
+                        ) : (isRegistering ? 'Create Account' : 'Sign In')}
                       </motion.button>
                       
                       <div className="text-center mt-4">
@@ -352,7 +371,7 @@ function Login({ onLogin }) {
                             Already have an account?{' '}
                             <motion.span
                               whileHover={{ color: '#4F46E5' }}
-                              onClick={() => navigate('/login')}
+                              onClick={() => navigate(ROUTES.LOGIN)}
                               className="text-indigo-600 hover:text-indigo-800 cursor-pointer font-medium"
                             >
                               Sign In
@@ -363,7 +382,7 @@ function Login({ onLogin }) {
                             Don't have an account?{' '}
                             <motion.span
                               whileHover={{ color: '#4F46E5' }}
-                              onClick={() => navigate('/register')}
+                              onClick={() => navigate(ROUTES.REGISTER)}
                               className="text-indigo-600 hover:text-indigo-800 cursor-pointer font-medium"
                             >
                               Create Account
@@ -376,8 +395,7 @@ function Login({ onLogin }) {
                 )}
               </div>
               
-              {/* Bottom decorative bar */}
-              <div className="h-1 bg-gradient-to-r from-green-400 to-emerald-500"></div>
+              <div className="h-1 bg-gradient-to-r from-emerald-500 to-teal-600"></div>
             </div>
             
             <motion.div 
