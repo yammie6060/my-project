@@ -10,7 +10,7 @@ import Users from './Components/Users';
 import Emails from './Components/Emails';
 import Login from './Login';
 
-// Enhanced Toast Component with animations
+// Toast Component
 const Toast = ({ message, type, onClose }) => {
   const bgColor = type === 'success' ? 'bg-emerald-500' : 
                  type === 'error' ? 'bg-rose-500' : 
@@ -26,16 +26,14 @@ const Toast = ({ message, type, onClose }) => {
   );
 };
 
-const THEME_KEY = 'theme';
-const PROFILE_IMAGE_KEY = 'profileImage';
-
+// Layout Component
 const Layout = ({ onLogout, username }) => {
   const [isSidebarOpen, setSidebarOpen] = useState(window.innerWidth > 1024);
   const [isCollapsed, setIsCollapsed] = useState(false);
-  const [isDark, setIsDark] = useState(localStorage.getItem(THEME_KEY) === 'dark');
+  const [isDark, setIsDark] = useState(localStorage.getItem('theme') === 'dark');
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 1024);
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  const [profileImage, setProfileImage] = useState(localStorage.getItem(PROFILE_IMAGE_KEY) || '');
+  const [profileImage, setProfileImage] = useState(localStorage.getItem('profileImage') || '');
   const [isFadingOut, setIsFadingOut] = useState(false);
   const [toast, setToast] = useState(null);
   const [activeSubmenu, setActiveSubmenu] = useState(null);
@@ -56,7 +54,7 @@ const Layout = ({ onLogout, username }) => {
 
   useEffect(() => {
     document.documentElement.classList.toggle('dark', isDark);
-    localStorage.setItem(THEME_KEY, isDark ? 'dark' : 'light');
+    localStorage.setItem('theme', isDark ? 'dark' : 'light');
   }, [isDark]);
 
   useEffect(() => {
@@ -105,7 +103,7 @@ const Layout = ({ onLogout, username }) => {
       const reader = new FileReader();
       reader.onload = () => {
         setProfileImage(reader.result);
-        localStorage.setItem(PROFILE_IMAGE_KEY, reader.result);
+        localStorage.setItem('profileImage', reader.result);
         showToast('Profile image updated!', 'success');
       };
       reader.readAsDataURL(file);
@@ -114,7 +112,7 @@ const Layout = ({ onLogout, username }) => {
 
   const removeProfileImage = () => {
     setProfileImage('');
-    localStorage.removeItem(PROFILE_IMAGE_KEY);
+    localStorage.removeItem('profileImage');
     showToast('Profile image removed', 'info');
     setDropdownOpen(false);
   };
@@ -131,6 +129,15 @@ const Layout = ({ onLogout, username }) => {
       exact: true
     },
     { 
+      title: 'Inventory', 
+      icon: <FaBoxOpen size={18} />,
+      submenu: [
+        { title: 'Stock Overview', path: '/stock' },
+        { title: 'Low Stock Alerts', path: '/stock/alerts' },
+        { title: 'Categories', path: '/stock/categories' }
+      ]
+    },
+    { 
       title: 'People', 
       icon: <FaUsers size={18} />,
       submenu: [
@@ -138,11 +145,15 @@ const Layout = ({ onLogout, username }) => {
         { title: 'User Accounts', path: '/users' }
       ]
     },
-        { title: 'Email', path: '/emails',
-          icon: <FaEnvelope size={18} />
-         },
-      
-
+    { 
+      title: 'Communications', 
+      icon: <FaEnvelope size={18} />,
+      submenu: [
+        { title: 'Email Campaigns', path: '/emails' },
+        { title: 'Templates', path: '/emails/templates' },
+        { title: 'Subscribers', path: '/emails/subscribers' }
+      ]
+    },
     { 
       title: 'Settings', 
       icon: <FaCog size={18} />, 
@@ -480,65 +491,4 @@ const Layout = ({ onLogout, username }) => {
   );
 };
 
-const App = () => {
-  const [isLoggedIn, setIsLoggedIn] = useState(() => {
-    return localStorage.getItem('isLoggedIn') === 'true';
-  });
-  
-  const [username, setUsername] = useState(() => {
-    return localStorage.getItem('username') || '';
-  });
-  
-  const [toast, setToast] = useState(null);
-  
-  useEffect(() => {
-    localStorage.setItem('isLoggedIn', isLoggedIn);
-    localStorage.setItem('username', username);
-  }, [isLoggedIn, username]);
-  
-  useEffect(() => {
-    if (toast) {
-      const timer = setTimeout(() => {
-        setToast(null);
-      }, 3000);
-      return () => clearTimeout(timer);
-    }
-  }, [toast]);
-
-  const showToast = (message, type) => {
-    setToast({ message, type });
-  };
-  
-  const handleLogin = (username) => {
-    setIsLoggedIn(true);
-    setUsername(username);
-    showToast(`Welcome back, ${username}!`, "success");
-  };
-  
-  const handleLogout = () => {
-    setIsLoggedIn(false);
-    setUsername('');
-    showToast('You have been logged out', "info");
-  };
-
-  return (
-    <BrowserRouter>
-      {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
-      <Routes>
-        <Route path="/login" element={<Login onLogin={handleLogin} />} />
-        <Route
-          path="/*"
-          element={
-            isLoggedIn ? (
-              <Layout onLogout={handleLogout} username={username} />
-            ) : (
-              <Navigate to="/login" replace />
-            )
-          }
-        />
-      </Routes>
-    </BrowserRouter>
-  );
-};
-
-export default App; 
+export default Layout;
