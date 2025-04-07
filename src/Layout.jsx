@@ -8,7 +8,6 @@ import Stock from './Components/Stock';
 import Staff from './Components/Staff';
 import Users from './Components/Users';
 import Emails from './Components/Emails';
-import Login from './Login';
 
 // Toast Component
 const Toast = ({ message, type, onClose }) => {
@@ -129,15 +128,6 @@ const Layout = ({ onLogout, username }) => {
       exact: true
     },
     { 
-      title: 'Inventory', 
-      icon: <FaBoxOpen size={18} />,
-      submenu: [
-        { title: 'Stock Overview', path: '/stock' },
-        { title: 'Low Stock Alerts', path: '/stock/alerts' },
-        { title: 'Categories', path: '/stock/categories' }
-      ]
-    },
-    { 
       title: 'People', 
       icon: <FaUsers size={18} />,
       submenu: [
@@ -146,13 +136,8 @@ const Layout = ({ onLogout, username }) => {
       ]
     },
     { 
-      title: 'Communications', 
+      title: 'Email', 
       icon: <FaEnvelope size={18} />,
-      submenu: [
-        { title: 'Email Campaigns', path: '/emails' },
-        { title: 'Templates', path: '/emails/templates' },
-        { title: 'Subscribers', path: '/emails/subscribers' }
-      ]
     },
     { 
       title: 'Settings', 
