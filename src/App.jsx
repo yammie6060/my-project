@@ -496,7 +496,7 @@ const Layout = ({ onLogout, username }) => {
 
 const App = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(() => {
-    return localStorage.getItem('isLoggedIn') === 'true';
+    return localStorage.getItem('isLoggedIn') === 'false';
   });
   
   const [username, setUsername] = useState(() => {
