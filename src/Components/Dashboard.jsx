@@ -80,15 +80,9 @@ const Dashboard = ({ isDark }) => {
           <FaHome size={24} /> 
           <span>Dashboard</span>
         </h4>
-     
+  
 
-      <div className="mt-6">
-        <h3 className={`text font-bold ${isDark ? 'text-white' : 'text-gray-500'}`}> 
-          Welcome, <span className={isDark ? 'text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-blue-700' : 'text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-blue-700'}>{username}</span>
-        </h3>
-      </div>
-
-      <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="mt-15 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         {cardData.map((item, index) => (
           <Link
             key={index}

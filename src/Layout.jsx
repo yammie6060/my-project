@@ -10,10 +10,24 @@ import Users from './Components/Users';
 import Emails from './Components/Emails';
 import Login from './Login';
 
+// Simple custom toast component
+const Toast = ({ message, type, onClose }) => {
+  const bgColor = type === 'success' ? 'bg-green-500' : 
+                 type === 'error' ? 'bg-red-500' : 
+                 type === 'info' ? 'bg-blue-500' : 'bg-gray-800';
+  
+  return (
+    <div className={`fixed top-4 right-4 ${bgColor} text-white px-4 py-2 rounded-md shadow-lg flex items-center justify-between z-50 min-w-64`}>
+      <span>{message}</span>
+      <button onClick={onClose} className="ml-4 text-white hover:text-gray-200">×</button>
+    </div>
+  );
+};
+
 const THEME_KEY = 'theme';
 const PROFILE_IMAGE_KEY = 'profileImage';
 
-const Layout = ({ onLogout }) => {
+const Layout = ({ onLogout, username }) => {
   const [isSidebarOpen, setSidebarOpen] = useState(window.innerWidth > 768);
   const [isIconsOnly, setIsIconsOnly] = useState(false);
   const [isDark, setIsDark] = useState(localStorage.getItem(THEME_KEY) === 'dark');
@@ -21,6 +35,7 @@ const Layout = ({ onLogout }) => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [profileImage, setProfileImage] = useState(localStorage.getItem(PROFILE_IMAGE_KEY) || '');
   const [isFadingOut, setIsFadingOut] = useState(false);
+  const [toast, setToast] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -41,6 +56,20 @@ const Layout = ({ onLogout }) => {
     localStorage.setItem(THEME_KEY, isDark ? 'dark' : 'light');
   }, [isDark]);
 
+  // Clear toast after 3 seconds
+  useEffect(() => {
+    if (toast) {
+      const timer = setTimeout(() => {
+        setToast(null);
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [toast]);
+
+  const showToast = (message, type) => {
+    setToast({ message, type });
+  };
+
   const toggleSidebar = () => {
     if (isMobile) {
       setSidebarOpen((prev) => !prev);
@@ -56,11 +85,12 @@ const Layout = ({ onLogout }) => {
   const handleLogout = () => {
     const confirmLogout = window.confirm('Are you sure you want to log out?');
     if (confirmLogout) {
+      showToast('Logging out...', 'info');
       setIsFadingOut(true);
       setTimeout(() => {
         onLogout();
         navigate('/login');
-      }, 300);
+      }, 500);
     }
   };
 
@@ -71,6 +101,7 @@ const Layout = ({ onLogout }) => {
       reader.onload = () => {
         setProfileImage(reader.result);
         localStorage.setItem(PROFILE_IMAGE_KEY, reader.result);
+        showToast('Profile image updated successfully', 'success');
       };
       reader.readAsDataURL(file);
     }
@@ -79,6 +110,8 @@ const Layout = ({ onLogout }) => {
   const removeProfileImage = () => {
     setProfileImage('');
     localStorage.removeItem(PROFILE_IMAGE_KEY);
+    showToast('Profile image removed', 'info');
+    setDropdownOpen(false);
   };
 
   const navItems = [
@@ -96,15 +129,17 @@ const Layout = ({ onLogout }) => {
         isFadingOut ? 'opacity-0' : 'opacity-100'
       } ${isDark ? 'bg-gray-900 text-white' : 'bg-gray-100 text-black'}`}
     >
+      {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
+      
       {isMobile && isSidebarOpen && (
         <div
-          className="fixed bg-black bg-opacity-50 z-50"
+          className="fixed inset-0 bg-black bg-opacity-50 z-40"
           onClick={toggleSidebar}
           aria-hidden="true"
         />
       )}
       <aside
-        className={`fixed inset-y-0 top-2 left-0 z-50 transition-transform duration-300 ease-in-out ${
+        className={`fixed inset-y-0 top-2 left-0 z-50 transition-all duration-300 ease-in-out ${
           isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
         } ${
           isMobile || isIconsOnly ? 'w-20' : 'w-64'
@@ -114,7 +149,19 @@ const Layout = ({ onLogout }) => {
             : 'bg-white text-gray-800 border-gray-200'
         } border-r shadow-lg rounded-r-xl`}
       >
-        <div className="flex items-center justify-end p-4 border-b border-gray-700">
+        <div className="flex items-center justify-between p-4 border-b border-gray-700">
+          {!isMobile && !isIconsOnly && (
+            <div className="flex items-center space-x-2">
+              <img
+                src={global}
+                alt="Logo"
+                className="w-8 h-8 object-contain"
+              />
+              <span className="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-green-300 via-blue-400 to-purple-400">
+                Thanzilanga+
+              </span>
+            </div>
+          )}
           {isMobile && (
             <button
               className="text-white hover:text-gray-300"
@@ -130,7 +177,11 @@ const Layout = ({ onLogout }) => {
           {navItems.map((item) => (
             <div
               key={item.title}
-              className="flex items-center p-4 rounded cursor-pointer hover:text-gray-700 transition-colors duration-200"
+              className={`flex items-center p-4 rounded cursor-pointer transition-colors duration-200 ${
+                isDark 
+                  ? 'hover:bg-gray-800 hover:text-white' 
+                  : 'hover:bg-gray-100 hover:text-gray-700'
+              }`}
               onClick={() => {
                 if (item.onClick) item.onClick();
                 else {
@@ -151,42 +202,59 @@ const Layout = ({ onLogout }) => {
         </nav>
       </aside>
       <header
-        className={`fixed top-0 left-0 right-0 z-50 h-16 flex items-center justify-between px-4 md:px-6 border-2 shadow-lg rounded-r-xl transition-all duration-300  ${
+        className={`fixed top-0 left-0 right-0 z-50 h-16 flex items-center justify-between px-4 md:px-6 border-2 shadow-lg rounded-r-xl transition-all duration-300 ${
           isDark ? 'bg-gray-900 text-white border-gray-700' : 'bg-white text-gray-800 border-gray-200'
         }`}
       >
         <div className="flex items-center space-x-4">
           <button
-            className="text-gray-700 hover:text-gray-400 p-2 cursor-pointer"
+            className={`p-2 cursor-pointer rounded-full hover:bg-opacity-80 ${
+              isDark ? 'hover:bg-gray-700' : 'hover:bg-gray-200'
+            }`}
             onClick={toggleSidebar}
             aria-label="Toggle sidebar"
           >
             <Menu size={24} />
           </button>
           <div className="flex items-center space-x-3">
-      <img
-        src={global}
-        alt="Hospital Sign"
-        className="w-8 h-8 md:w-10 md:h-10 object-contain"
-      />
-      <h2 className={"hidden md:block text-base md:text-lg font-bold whitespace-nowrap"}>
-        <span className='text-lg font-bold text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-blue-700'>
-        Thanzilanga+ </span>
-      </h2>
-    </div>
+            <img
+              src={global}
+              alt="Hospital Sign"
+              className="w-8 h-8 md:w-10 md:h-10 object-contain"
+            />
+            <h2 className="hidden md:block text-base md:text-lg font-bold whitespace-nowrap">
+              <span className="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-green-300 via-blue-400 to-purple-400">
+                Thanzilanga+ 
+              </span>
+            </h2>
+          </div>
         </div>
 
         <div className="flex items-center space-x-4">
+          <div className="hidden md:block">
+            <span className={`text-sm ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>
+              Welcome, {username || 'User'}
+            </span>
+          </div>
+          
           <button
-            className="w-8 h-8 flex items-center cursor-pointer justify-center rounded-full hover:bg-gray-600 transition-colors duration-200"
+            className={`w-8 h-8 flex items-center cursor-pointer justify-center rounded-full transition-colors duration-200 ${
+              isDark ? 'hover:bg-gray-700' : 'hover:bg-gray-200'
+            }`}
             onClick={toggleTheme}
             aria-label="Toggle theme"
           >
             {isDark ? <Sun size={20} /> : <Moon size={20} />}
           </button>
 
-          <button className="hover:text-gray-400 cursor-pointer" aria-label="Notifications">
+          <button 
+            className={`hover:text-gray-400 cursor-pointer relative ${
+              isDark ? 'hover:bg-gray-700' : 'hover:bg-gray-200'
+            } rounded-full p-2`} 
+            aria-label="Notifications"
+          >
             <Bell size={20} />
+            <span className="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full"></span>
           </button>
 
           <div className="relative">
@@ -198,26 +266,46 @@ const Layout = ({ onLogout }) => {
               {profileImage ? (
                 <img src={profileImage} alt="Profile" className="w-full h-full object-cover" />
               ) : (
-                <FaUserCircle size={30} className="text-gray-400 cursor-pointer" />
+                <FaUserCircle size={30} className={`${isDark ? 'text-gray-300' : 'text-gray-500'} cursor-pointer`} />
               )}
             </button>
 
             {dropdownOpen && (
-              <div className="absolute right-0 mt-2 w-48 bg-gray-700 cursor-pointer rounded-lg shadow-lg">
+              <div 
+                className={`absolute right-0 mt-2 w-48 rounded-lg shadow-lg ${
+                  isDark ? 'bg-gray-800 text-white' : 'bg-white text-gray-800'
+                } border ${isDark ? 'border-gray-700' : 'border-gray-200'}`}
+              >
+                <div className="px-4 py-3 border-b border-gray-200">
+                  <p className="text-sm font-medium">{username || 'User'}</p>
+                  <p className="text-xs text-gray-500">Active user</p>
+                </div>
                 <label
                   htmlFor="profile-upload"
-                  className="block px-4 py-2 text-sm text-white hover:text-gray-400 cursor-pointer"
+                  className={`block px-4 py-2 text-sm hover:bg-opacity-80 cursor-pointer ${
+                    isDark ? 'hover:bg-gray-700' : 'hover:bg-gray-100'
+                  }`}
                 >
                   {profileImage ? 'Change' : 'Upload'} Profile
                 </label>
                 {profileImage && (
                   <button
                     onClick={removeProfileImage}
-                    className="block w-full px-4 py-2 text-sm text-white hover:bg-gray-600 text-left"
+                    className={`block w-full px-4 py-2 text-sm text-left ${
+                      isDark ? 'hover:bg-gray-700' : 'hover:bg-gray-100'
+                    }`}
                   >
                     Remove Profile
                   </button>
                 )}
+                <button
+                  onClick={handleLogout}
+                  className={`block w-full px-4 py-2 text-sm text-left border-t ${
+                    isDark ? 'border-gray-700 hover:bg-gray-700' : 'border-gray-200 hover:bg-gray-100'
+                  }`}
+                >
+                  Sign out
+                </button>
                 <input
                   type="file"
                   id="profile-upload"
@@ -245,7 +333,7 @@ const Layout = ({ onLogout }) => {
             <Route path="/emails" element={<Emails />} />
             <Route path="*" element={<Navigate to="/dashboard" replace />} />
           </Routes>
-          <footer className="text-center text-sm text-gray-500 py-4">
+          <footer className={`text-center text-sm ${isDark ? 'text-gray-400' : 'text-gray-500'} py-4`}>
             &copy; 2025 Thanzilanga+. All rights reserved
           </footer>
         </main>
@@ -263,15 +351,31 @@ const App = () => {
     return localStorage.getItem('username') || '';
   });
   
+  const [toast, setToast] = useState(null);
   
   useEffect(() => {
     localStorage.setItem('isLoggedIn', isLoggedIn);
     localStorage.setItem('username', username);
   }, [isLoggedIn, username]);
   
+  // Clear toast after 3 seconds
+  useEffect(() => {
+    if (toast) {
+      const timer = setTimeout(() => {
+        setToast(null);
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [toast]);
+
+  const showToast = (message, type) => {
+    setToast({ message, type });
+  };
+  
   const handleLogin = (username) => {
     setIsLoggedIn(true);
     setUsername(username);
+    showToast(`Welcome back, ${username}!`, "success");
   };
   
   const handleLogout = () => {
@@ -279,9 +383,12 @@ const App = () => {
     setUsername('');
     localStorage.removeItem('isLoggedIn');
     localStorage.removeItem('username');
+    showToast('You have been logged out', "info");
   };
+
   return (
     <BrowserRouter>
+      {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
       <Routes>
         <Route path="/login" element={<Login onLogin={handleLogin} />} />
         <Route path="/register" element={<Login onLogin={handleLogin} />} />
@@ -290,7 +397,7 @@ const App = () => {
           path="/*"
           element={
             isLoggedIn ? (
-              <Layout onLogout={handleLogout} />
+              <Layout onLogout={handleLogout} username={username} />
             ) : (
               <Navigate to="/login" replace />
             )
