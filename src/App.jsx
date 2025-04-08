@@ -6,7 +6,6 @@ import global from './assets/global-aid.png';
 import Dashboard from './Components/Dashboard';
 import Stock from './Components/Stock';
 import Staff from './Components/Staff';
-import Users from './Components/Users';
 import Emails from './Components/Emails';
 import Login from './Login';
 
@@ -14,7 +13,7 @@ import Login from './Login';
 const Toast = ({ message, type, onClose }) => {
   const bgColor = type === 'success' ? 'bg-emerald-500' : 
                  type === 'error' ? 'bg-rose-500' : 
-                 type === 'info' ? 'bg-sky-500' : 'bg-gray-800';
+                 type === 'info' ? 'bg-blue-500' : 'bg-gray-800';
   
   return (
     <div className={`fixed top-4 right-4 ${bgColor} text-white px-4 py-3 rounded-lg shadow-xl flex items-center justify-between z-50 min-w-64 animate-fade-in-up`}>
@@ -22,6 +21,34 @@ const Toast = ({ message, type, onClose }) => {
       <button onClick={onClose} className="ml-4 text-white hover:text-gray-200 transition-colors">
         <X size={18} />
       </button>
+    </div>
+  );
+};
+
+// Confirmation Dialog Component
+const ConfirmationDialog = ({ isOpen, onClose, onConfirm, title, message }) => {
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
+      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-2xl max-w-md w-full p-6 border dark:border-gray-700">
+        <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">{title}</h3>
+        <p className="text-gray-600 dark:text-gray-300 mb-6">{message}</p>
+        <div className="flex justify-end space-x-3">
+          <button
+            onClick={onClose}
+            className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+          >
+            Cancel
+          </button>
+          <button
+            onClick={onConfirm}
+            className="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors"
+          >
+            Confirm
+          </button>
+        </div>
+      </div>
     </div>
   );
 };
@@ -39,6 +66,7 @@ const Layout = ({ onLogout, username }) => {
   const [isFadingOut, setIsFadingOut] = useState(false);
   const [toast, setToast] = useState(null);
   const [activeSubmenu, setActiveSubmenu] = useState(null);
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -86,12 +114,21 @@ const Layout = ({ onLogout, username }) => {
   };
 
   const handleLogout = () => {
+    setShowLogoutConfirm(true);
+  };
+
+  const confirmLogout = () => {
     showToast('Logging out...', 'info');
     setIsFadingOut(true);
     setTimeout(() => {
       onLogout();
       navigate('/login');
     }, 500);
+    setShowLogoutConfirm(false);
+  };
+
+  const cancelLogout = () => {
+    setShowLogoutConfirm(false);
   };
 
   const handleProfileImageUpload = (e) => {
@@ -143,18 +180,12 @@ const Layout = ({ onLogout, username }) => {
       title: 'People', 
       icon: <FaUsers size={18} />,
       submenu: [
-        { title: 'Staff Management', path: '/staff' },
-        { title: 'User Accounts', path: '/users' }
+        { title: 'Staff Management', path: '/staff' }
       ]
     },
     { 
-      title: 'Communications', 
+      title: 'Emails', path: '/emails',
       icon: <FaEnvelope size={18} />,
-      submenu: [
-        { title: 'Email Campaigns', path: '/emails' },
-        { title: 'Templates', path: '/emails/templates' },
-        { title: 'Subscribers', path: '/emails/subscribers' }
-      ]
     },
     { 
       title: 'Settings', 
@@ -170,6 +201,15 @@ const Layout = ({ onLogout, username }) => {
       } ${isDark ? 'dark bg-gray-900 text-gray-100' : 'bg-gray-50 text-gray-900'}`}
     >
       {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
+      {showLogoutConfirm && (
+        <ConfirmationDialog
+          isOpen={showLogoutConfirm}
+          onClose={cancelLogout}
+          onConfirm={confirmLogout}
+          title="Confirm Logout"
+          message="Are you sure you want to log out of your account?"
+        />
+      )}
       
       {/* Backdrop for mobile sidebar */}
       {isMobile && isSidebarOpen && (
@@ -193,7 +233,7 @@ const Layout = ({ onLogout, username }) => {
         } border-r shadow-xl flex flex-col`}
       >
         {/* Sidebar Header */}
-        <div className="flex items-center justify-between p-4 border-b">
+        <div className="flex items-center justify-between p-4 ">
           {!isCollapsed && (
             <div className="flex items-center space-x-2">
               <img
@@ -201,7 +241,7 @@ const Layout = ({ onLogout, username }) => {
                 alt="Logo"
                 className="w-8 h-8 object-contain"
               />
-              <span className="text-xl font-bold bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text text-transparent">
+              <span className="text-xl font-bold bg-gradient-to-r from-blue-500 to-teal-600 bg-clip-text text-transparent">
                 Thanzilanga+
               </span>
             </div>
@@ -467,10 +507,8 @@ const Layout = ({ onLogout, username }) => {
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/stock" element={<Stock />} />
               <Route path="/staff" element={<Staff />} />
-              <Route path="/users" element={<Users />} />
               <Route path="/emails" element={<Emails />} />
               <Route path="*" element={<Navigate to="/dashboard" replace />} />
-              
             </Routes>
           </div>
           
@@ -496,7 +534,7 @@ const Layout = ({ onLogout, username }) => {
 
 const App = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(() => {
-    return localStorage.getItem('isLoggedIn') === 'false';
+    return localStorage.getItem('isLoggedIn') === 'true';
   });
   
   const [username, setUsername] = useState(() => {
@@ -539,7 +577,7 @@ const App = () => {
     <BrowserRouter>
       {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
       <Routes>
-      <Route path="/login" element={<Login onLogin={handleLogin} />} />
+        <Route path="/login" element={<Login onLogin={handleLogin} />} />
         <Route
           path="/*"
           element={
@@ -549,14 +587,12 @@ const App = () => {
               <Navigate to="/login" replace />
             )
           }
-          
         />
         <Route path="/register" element={<Login onLogin={handleLogin} />} />
         <Route path="/password-reset" element={<Login onLogin={handleLogin} />} />
       </Routes>
     </BrowserRouter>
   );
-  ''
 };
 
 export default App;

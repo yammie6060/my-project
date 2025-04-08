@@ -15,7 +15,7 @@ const ROUTES = {
 
 const AuthHeader = ({ onLoginClick, onRegisterClick }) => {
   return (
-    <div className="bg-gradient-to-r from-indigo-900 via-purple-900 to-violet-900 text-white py-4 shadow-xl">
+    <div className="bg-gradient-to-r from-blue-900 via-cyan-900 to-teal-900 text-white py-4 shadow-xl">
       <div className="container mx-auto flex justify-between items-center px-6">
         <div className="flex items-center space-x-3">
           <motion.img 
@@ -29,17 +29,17 @@ const AuthHeader = ({ onLoginClick, onRegisterClick }) => {
             initial={{ opacity: 0, x: -10 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.2 }}
-            className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-blue-400 to-purple-400"
+            className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-sky-300 via-blue-400 to-teal-400"
           >
             Thanzilanga+
           </motion.span>
         </div>
         <div className="flex space-x-4">
           <motion.button
-            whileHover={{ scale: 1.05, boxShadow: "0 10px 25px -5px rgba(99, 102, 241, 0.4)" }}
+            whileHover={{ scale: 1.05, boxShadow: "0 10px 25px -5px rgba(14, 165, 233, 0.4)" }}
             whileTap={{ scale: 0.95 }}
             onClick={onLoginClick}
-            className="bg-gradient-to-r from-indigo-600 to-purple-700 text-white px-6 py-2 rounded-lg text-sm font-medium transition-all duration-300 shadow-lg hover:shadow-indigo-500/30"
+            className="bg-gradient-to-r from-blue-600 to-teal-700 text-white px-6 py-2 rounded-lg text-sm font-medium transition-all duration-300 shadow-lg hover:shadow-blue-500/30"
           >
             Login
           </motion.button>
@@ -64,11 +64,11 @@ const FormInput = ({ type, name, value, onChange, label, required = true }) => (
       name={name}
       value={value}
       onChange={onChange}
-      className="peer w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-sm transition-all duration-300 bg-white/90 backdrop-blur-sm group-hover:border-indigo-300"
+      className="peer w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm transition-all duration-300 bg-white/90 backdrop-blur-sm group-hover:border-blue-300"
       placeholder=" "
       required={required}
     />
-    <label className="absolute left-3 -top-2.5 px-1 bg-white text-gray-600 text-xs transition-all duration-200 ease-in-out peer-focus:text-indigo-600 peer-focus:font-medium">
+    <label className="absolute left-3 -top-2.5 px-1 bg-white text-gray-600 text-xs transition-all duration-200 ease-in-out peer-focus:text-blue-600 peer-focus:font-medium">
       {label}
     </label>
   </div>
@@ -175,15 +175,15 @@ function Login({ onLogin }) {
     exit: { opacity: 0, y: -20, transition: { duration: 0.3 } }
   };
 
-  const buttonColorClass = "bg-gradient-to-r from-indigo-600 to-purple-700 hover:from-indigo-700 hover:to-purple-800";
+  const buttonColorClass = "bg-gradient-to-r from-blue-600 to-teal-700 hover:from-blue-700 hover:to-teal-800";
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-cyan-50">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-cyan-50 to-teal-50">
       <ToastContainer 
         position="top-right" 
         autoClose={3000}
         toastClassName="!bg-white !text-gray-800 !shadow-xl !rounded-xl !border !border-gray-200"
-        progressClassName="!bg-gradient-to-r from-indigo-500 to-purple-600"
+        progressClassName="!bg-gradient-to-r from-blue-500 to-teal-600"
       />
       
       <AuthHeader
@@ -202,9 +202,9 @@ function Login({ onLogin }) {
             className="w-full max-w-md"
           >
             <div className="bg-white/95 backdrop-blur-md rounded-3xl shadow-2xl overflow-hidden border border-white/20">
-              <div className="h-2 bg-gradient-to-r from-indigo-600 via-purple-600 to-violet-600"></div>
+              <div className="h-2 bg-gradient-to-r from-blue-600 via-cyan-600 to-teal-600"></div>
               
-              <div className="bg-gradient-to-br from-indigo-700 to-purple-800 text-white px-8 py-6">
+              <div className="bg-gradient-to-br from-blue-700 to-cyan-800 text-white px-8 py-6">
                 <motion.h2 
                   initial={{ opacity: 0, x: -10 }}
                   animate={{ opacity: 1, x: 0 }}
@@ -216,7 +216,7 @@ function Login({ onLogin }) {
                 <motion.p 
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1, transition: { delay: 0.3 } }}
-                  className="text-indigo-200 text-sm"
+                  className="text-blue-200 text-sm"
                 >
                   {isResetting 
                     ? 'Enter your email to receive reset instructions'
@@ -240,11 +240,11 @@ function Login({ onLogin }) {
                       />
                       
                       <motion.button
-                        whileHover={{ scale: 1.02, boxShadow: "0 10px 25px -5px rgba(99, 102, 241, 0.4)" }}
+                        whileHover={{ scale: 1.02, boxShadow: "0 10px 25px -5px rgba(14, 165, 233, 0.4)" }}
                         whileTap={{ scale: 0.98 }}
                         type="submit"
                         disabled={loading}
-                        className={`w-full ${buttonColorClass} text-white py-3 rounded-xl text-sm font-medium transition-all duration-300 shadow-lg hover:shadow-indigo-500/30 ${loading ? 'opacity-70 cursor-not-allowed' : ''}`}
+                        className={`w-full ${buttonColorClass} text-white py-3 rounded-xl text-sm font-medium transition-all duration-300 shadow-lg hover:shadow-blue-500/30 ${loading ? 'opacity-70 cursor-not-allowed' : ''}`}
                       >
                         {loading ? (
                           <span className="flex items-center justify-center">
@@ -260,9 +260,9 @@ function Login({ onLogin }) {
                       
                       <div className="text-center mt-4">
                         <motion.span
-                          whileHover={{ color: '#4F46E5' }}
+                          whileHover={{ color: '#0EA5E9' }}
                           onClick={() => navigate(ROUTES.LOGIN)}
-                          className="text-indigo-600 hover:text-indigo-800 text-sm cursor-pointer font-medium"
+                          className="text-blue-600 hover:text-blue-800 text-sm cursor-pointer font-medium"
                         >
                           Back to Login
                         </motion.span>
@@ -329,15 +329,15 @@ function Login({ onLogin }) {
                               name="rememberMe"
                               checked={formData.rememberMe}
                               onChange={handleChange}
-                              className="w-4 h-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"
+                              className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
                             />
                             <label className="ml-2 text-sm text-gray-600">Remember me</label>
                           </div>
                           <div>
                             <motion.span
-                              whileHover={{ color: '#4F46E5' }}
+                              whileHover={{ color: '#0EA5E9' }}
                               onClick={() => navigate(ROUTES.PASSWORD_RESET)}
-                              className="text-indigo-600 hover:text-indigo-800 text-sm cursor-pointer font-medium"
+                              className="text-blue-600 hover:text-blue-800 text-sm cursor-pointer font-medium"
                             >
                               Forgot Password?
                             </motion.span>
@@ -346,11 +346,11 @@ function Login({ onLogin }) {
                       )}
                       
                       <motion.button
-                        whileHover={{ scale: 1.02, boxShadow: "0 10px 25px -5px rgba(99, 102, 241, 0.4)" }}
+                        whileHover={{ scale: 1.02, boxShadow: "0 10px 25px -5px rgba(14, 165, 233, 0.4)" }}
                         whileTap={{ scale: 0.98 }}
                         type="submit"
                         disabled={loading}
-                        className={`w-full mt-2 ${buttonColorClass} text-white py-3 rounded-xl text-sm font-medium transition-all duration-300 shadow-lg hover:shadow-indigo-500/30
+                        className={`w-full mt-2 ${buttonColorClass} text-white py-3 rounded-xl text-sm font-medium transition-all duration-300 shadow-lg hover:shadow-blue-500/30
                         ${loading ? 'opacity-70 cursor-not-allowed' : ''}`}
                       >
                         {loading ? (
@@ -370,9 +370,9 @@ function Login({ onLogin }) {
                           <p className="text-sm text-gray-600">
                             Already have an account?{' '}
                             <motion.span
-                              whileHover={{ color: '#4F46E5' }}
+                              whileHover={{ color: '#0EA5E9' }}
                               onClick={() => navigate(ROUTES.LOGIN)}
-                              className="text-indigo-600 hover:text-indigo-800 cursor-pointer font-medium"
+                              className="text-blue-600 hover:text-blue-800 cursor-pointer font-medium"
                             >
                               Sign In
                             </motion.span>
@@ -381,9 +381,9 @@ function Login({ onLogin }) {
                           <p className="text-sm text-gray-600">
                             Don't have an account?{' '}
                             <motion.span
-                              whileHover={{ color: '#4F46E5' }}
+                              whileHover={{ color: '#0EA5E9' }}
                               onClick={() => navigate(ROUTES.REGISTER)}
-                              className="text-indigo-600 hover:text-indigo-800 cursor-pointer font-medium"
+                              className="text-blue-600 hover:text-blue-800 cursor-pointer font-medium"
                             >
                               Create Account
                             </motion.span>
