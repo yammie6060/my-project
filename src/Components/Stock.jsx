@@ -1,39 +1,12 @@
-import React, { useState } from "react";
-import { FaBoxOpen, FaTrash, FaPlus } from "react-icons/fa";
-import { Modal, Button, Table, Badge } from "flowbite-react";
+import React, { useState, useEffect } from "react";
+import { FaBoxOpen, FaTrash, FaPlus, FaSearch } from "react-icons/fa";
+import { Modal, Button, Table, Badge, TextInput, Spinner } from "flowbite-react";
 import { HiOutlineExclamationCircle } from "react-icons/hi";
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const Stock = () => {
-  const [stockItems, setStockItems] = useState([
-    {
-      id: 1,
-      name: "Paracetamol",
-      quantity: 150,
-      description: "Pain reliever",
-      price: 5.99,
-      category: "Tablets",
-      status: "In Stock"
-    },
-    {
-      id: 2,
-      name: "Amoxicillin",
-      quantity: 75,
-      description: "Antibiotic",
-      price: 12.50,
-      category: "Capsules",
-      status: "Low Stock"
-    },
-    {
-      id: 3,
-      name: "Insulin",
-      quantity: 30,
-      description: "Diabetes medication",
-      price: 45.00,
-      category: "Injections",
-      status: "In Stock"
-    }
-  ]);
-  
+  const [stockItems, setStockItems] = useState([]);
   
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(null);
@@ -45,6 +18,15 @@ const Stock = () => {
     category: '',
     status: 'In Stock'
   });
+  const [searchTerm, setSearchTerm] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+
+  // Filter stock items based on search term
+  const filteredItems = stockItems.filter(item => 
+    item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    item.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    item.category.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   const setOpenModal = () => {
     setIsFormOpen(!isFormOpen);
@@ -68,24 +50,58 @@ const Stock = () => {
     });
   };
 
-  const handleAddStock = (event) => {
+  const handleAddStock = async (event) => {
     event.preventDefault();
-    const newStock = {
-      id: stockItems.length + 1,
-      name: formData.name,
-      quantity: formData.quantity,
-      description: formData.description,
-      price: formData.price,
-      category: formData.category,
-      status: formData.quantity > 50 ? 'In Stock' : 'Low Stock'
-    };
-    setStockItems([...stockItems, newStock]);
-    setIsFormOpen(false);
+    setIsLoading(true);
+    
+    try {
+      // Simulate API call delay
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      const newStock = {
+        id: stockItems.length + 1,
+        name: formData.name,
+        quantity: parseInt(formData.quantity),
+        description: formData.description,
+        price: parseFloat(formData.price),
+        category: formData.category,
+        status: formData.quantity > 50 ? 'In Stock' : (formData.quantity > 0 ? 'Low Stock' : 'Out of Stock')
+      };
+      
+      setStockItems([newStock, ...stockItems]);
+      setIsFormOpen(false);
+      toast.success(`${newStock.name} added successfully!`);
+      
+      onStockAdded(newStock);
+      
+    } catch (error) {
+      toast.error('Failed to add stock item');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  const handleDeleteStock = (id) => {
-    setStockItems(stockItems.filter((item) => item.id !== id));
-    setConfirmDelete(null);
+  const onStockAdded = (newStock) => {
+    console.log('New stock added:', newStock);
+
+  };
+
+  const handleDeleteStock = async (id) => {
+    setIsLoading(true);
+    try {
+      // Simulate API call delay
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      const itemToDelete = stockItems.find(item => item.id === id);
+      setStockItems(stockItems.filter((item) => item.id !== id));
+      setConfirmDelete(null);
+      toast.info(`${itemToDelete.name} deleted successfully`);
+      
+    } catch (error) {
+      toast.error('Failed to delete stock item');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const getStatusBadgeColor = (status) => {
@@ -99,17 +115,36 @@ const Stock = () => {
 
   return (
     <div className="min-h-screen">
-      <div className="flex justify-between bg-gradient-to-r from-teal-600 to-blue-600 py-4 px-8 mb-6">
-        <h4 className="text-white font-bold flex items-center gap-2 text-lg">
-          <FaBoxOpen className="w-5 h-5" /> Stock Management
-        </h4>
-        <Button onClick={setOpenModal} gradientDuoTone="greenToBlue" className="flex items-center gap-2">
+      <ToastContainer position="top-right" autoClose={3000} />
+      
+      <div className="bg-gradient-to-r from-teal-600 to-blue-600 py-4 px-8 mb-6">
+        <div className="max-w-7xl mx-auto flex justify-between items-center">
+          <h4 className="text-white font-bold flex items-center gap-2 text-lg">
+            <FaBoxOpen className="w-5 h-5" /> Stock Management
+          </h4>
+          <Button onClick={setOpenModal} gradientDuoTone="greenToBlue" className="flex items-center gap-2">
             <FaPlus />
             Add Stock
           </Button>
+        </div>
       </div>
       
-      <div className="max-w-7xl mx-auto px-4 my-8">
+      <div className=" px-4 my-8">
+        {/* Search Bar */}
+        <div className="mb-6 bg-white p-4 rounded-lg shadow">
+          <div className="relative">
+            <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+              <FaSearch className="text-gray-500" />
+            </div>
+            <TextInput
+              type="text"
+              placeholder="Search by name, description or category..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-10 w-full bg--gray-50 text-gray-900 border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+  />
+          </div>
+        </div>
 
         {/* Add Stock Modal */}
         <Modal show={isFormOpen} onClose={setOpenModal} size="md" popup>
@@ -134,6 +169,7 @@ const Stock = () => {
                 <label className="block font-medium text-gray-700 mb-1">Quantity:</label>
                 <input
                   type="number"
+                  min="0"
                   name="quantity"
                   value={formData.quantity}
                   onChange={handleFormChange}
@@ -155,9 +191,11 @@ const Stock = () => {
                 />
               </div>
               <div>
-                <label className="block font-medium text-gray-700 mb-1">Price:</label>
+                <label className="block font-medium text-gray-700 mb-1">Price (MWK):</label>
                 <input
                   type="number"
+                  min="0"
+                  step="0.01"
                   name="price"
                   value={formData.price}
                   onChange={handleFormChange}
@@ -185,8 +223,15 @@ const Stock = () => {
                 <Button type="button" color="gray" onClick={setOpenModal}>
                   Cancel
                 </Button>
-                <Button type="submit" gradientDuoTone="greenToBlue" className="flex items-center gap-2">
-                  Add Item
+                <Button type="submit" gradientDuoTone="greenToBlue" className="flex items-center gap-2" disabled={isLoading}>
+                  {isLoading ? (
+                    <>
+                      <Spinner size="sm" className="mr-2" />
+                      Adding...
+                    </>
+                  ) : (
+                    'Add Item'
+                  )}
                 </Button>
               </div>
             </form>
@@ -203,10 +248,10 @@ const Stock = () => {
                 Are you sure you want to delete this item?
               </h3>
               <div className="flex justify-center gap-4">
-                <Button color="failure" onClick={() => handleDeleteStock(confirmDelete)}>
-                  Yes, delete
+                <Button color="failure" onClick={() => handleDeleteStock(confirmDelete)} disabled={isLoading}>
+                  {isLoading ? <Spinner size="sm" /> : 'Yes, delete'}
                 </Button>
-                <Button color="gray" onClick={() => setConfirmDelete(null)}>
+                <Button color="gray" onClick={() => setConfirmDelete(null)} disabled={isLoading}>
                   No, cancel
                 </Button>
               </div>
@@ -215,7 +260,11 @@ const Stock = () => {
         </Modal>
 
         {/* Stock Table */}
-        {stockItems.length > 0 ? (
+        {isLoading && !isFormOpen && !confirmDelete ? (
+          <div className="flex justify-center items-center h-64">
+            <Spinner size="xl" />
+          </div>
+        ) : filteredItems.length > 0 ? (
           <div className="mt-4">
             <div className="overflow-x-auto bg-white rounded-lg shadow">
               <Table hoverable className="w-full">
@@ -223,20 +272,20 @@ const Stock = () => {
                   <Table.HeadCell>Name</Table.HeadCell>
                   <Table.HeadCell>Quantity</Table.HeadCell>
                   <Table.HeadCell>Description</Table.HeadCell>
-                  <Table.HeadCell>Price</Table.HeadCell>
+                  <Table.HeadCell>Price (MWK)</Table.HeadCell>
                   <Table.HeadCell>Category</Table.HeadCell>
                   <Table.HeadCell>Status</Table.HeadCell>
                   <Table.HeadCell>Actions</Table.HeadCell>
                 </Table.Head>
                 <Table.Body className="divide-y">
-                  {stockItems.map((stock) => (
+                  {filteredItems.map((stock) => (
                     <Table.Row key={stock.id} className="hover:bg-gray-50">
                       <Table.Cell className="font-medium text-gray-900">
                         {stock.name}
                       </Table.Cell>
                       <Table.Cell>{stock.quantity}</Table.Cell>
-                      <Table.Cell>{stock.description}</Table.Cell>
-                      <Table.Cell>MWK{stock.price.toFixed(2)}</Table.Cell>
+                      <Table.Cell className="max-w-xs truncate">{stock.description}</Table.Cell>
+                      <Table.Cell>{stock.price.toFixed(2)}</Table.Cell>
                       <Table.Cell>{stock.category}</Table.Cell>
                       <Table.Cell>
                         <Badge color={getStatusBadgeColor(stock.status)}>
@@ -248,6 +297,7 @@ const Stock = () => {
                           color="failure"
                           size="xs"
                           onClick={() => setConfirmDelete(stock.id)}
+                          disabled={isLoading}
                         >
                           <FaTrash className="mr-1" /> Delete
                         </Button>
@@ -258,7 +308,7 @@ const Stock = () => {
               </Table>
             </div>
             <div className="mt-4 text-sm text-gray-500 text-right">
-              Showing {stockItems.length} items
+              Showing {filteredItems.length} of {stockItems.length} items
             </div>
           </div>
         ) : (
@@ -267,11 +317,16 @@ const Stock = () => {
               <FaBoxOpen className="mx-auto" />
             </div>
             <p className="text-xl font-medium text-gray-500 mb-4">
-              No stock items available
+              {searchTerm ? 'No matching items found' : 'No stock items available'}
             </p>
             <p className="text-gray-500 mb-6">
-              Add your first stock item by clicking the "Add Stock" button above.
+              {searchTerm ? 'Try a different search term' : 'Add your first stock item using the button above'}
             </p>
+            {!searchTerm && (
+              <Button onClick={setOpenModal} gradientDuoTone="tealToBlue">
+                <FaPlus className="mr-2" /> Add Your First Item
+              </Button>
+            )}
           </div>
         )}
       </div>
