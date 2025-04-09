@@ -519,11 +519,6 @@ const Layout = ({ onLogout, username }) => {
               <div className="mb-2 md:mb-0">
                 &copy; {new Date().getFullYear()} Thanzilanga+. All rights reserved.
               </div>
-              <div className="flex space-x-4">
-                <a href="#" className="hover:underline">Privacy Policy</a>
-                <a href="#" className="hover:underline">Terms of Service</a>
-                <a href="#" className="hover:underline">Contact Support</a>
-              </div>
             </div>
           </footer>
         </main>
