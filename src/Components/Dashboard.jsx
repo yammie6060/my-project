@@ -9,7 +9,6 @@ const Dashboard = ({ isDark }) => {
   // Mock data with animations
   const [totalStock, setTotalStock] = useState(0);
   const [totalStaff, setTotalStaff] = useState(0);
-  const [totalUsers, setTotalUsers] = useState(0);
   const [totalEmails, setTotalEmails] = useState(0);
   
   // Simulate loading data
@@ -17,20 +16,17 @@ const Dashboard = ({ isDark }) => {
     const timer1 = setTimeout(300);
     const timer2 = setTimeout(600);
     const timer3 = setTimeout(900);
-    const timer4 = setTimeout(1200);
     
     return () => {
       clearTimeout(timer1);
       clearTimeout(timer2);
       clearTimeout(timer3);
-      clearTimeout(timer4);
     };
   }, []);
 
   const navProgressData = [
     { title: 'Stock',  color: '#3b82f6' },
     { title: 'Staff',  color: '#f59e0b' },
-    { title: 'Users',  color: '#ef4444' },
     { title: 'Emails',  color: '#10b981' },
   ];
 
@@ -60,19 +56,6 @@ const Dashboard = ({ isDark }) => {
       darkBorder: 'border-orange-800',
       hoverLight: 'hover:bg-orange-100',
       hoverDark: 'hover:bg-orange-900/30'
-    },
-    { 
-      to: '/users', 
-      icon: FaUserAlt, 
-      label: 'Total Users', 
-      count: totalUsers,
-      color: '#ef4444',
-      lightBg: 'bg-red-50',
-      darkBg: 'bg-red-900/20',
-      lightBorder: 'border-red-200',
-      darkBorder: 'border-red-800',
-      hoverLight: 'hover:bg-red-100',
-      hoverDark: 'hover:bg-red-900/30'
     },
     { 
       to: '/emails', 
